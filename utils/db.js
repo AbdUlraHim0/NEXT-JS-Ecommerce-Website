@@ -4,7 +4,7 @@ const connection = {}
 
 async function connect() {
   if (connection.isConnected) {
-    console.log("Already Connected")
+    console.log("already connected")
     return
   }
   if (mongoose.connections.length > 0) {
@@ -15,8 +15,7 @@ async function connect() {
     }
     await mongoose.disconnect()
   }
-  const db = await mongoose.connect(process.env.MONGO_URI)
-
+  const db = await mongoose.connect(process.env.MONGO_URI, {})
   console.log("new connection")
   connection.isConnected = db.connections[0].readyState
 }

@@ -1,72 +1,62 @@
-import React, { useContext } from "react"
-import dynamic from "next/dynamic"
-import { Store } from "../context/Store"
-import Layout from "../components/Layout"
+import React, { useContext } from 'react';
+import dynamic from 'next/dynamic';
+import Layout from '../components/Layout';
+import { Store } from '../utils/Store';
+import NextLink from 'next/link';
+import Image from 'next/image';
 import {
+  Grid,
+  TableContainer,
+  Table,
+  Typography,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Link,
+  Select,
+  MenuItem,
   Button,
   Card,
-  Grid,
-  Link,
   List,
   ListItem,
-  MenuItem,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material"
-import NextLink from "next/link"
-import Image from "next/image"
-import axios from "axios"
-import { useRouter } from "next/router"
+  Box,
+} from '@mui/material';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
-function CartPage() {
-  const router = useRouter()
-  const { state, dispatch } = useContext(Store)
+function CartScreen() {
+  const router = useRouter();
+  const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
-  } = state
-
+  } = state;
   const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`/api/products/${item._id}`)
+    const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
-      window.alert("Sorry Product is out of stock")
-      return
+      window.alert('Sorry. Product is out of stock');
+      return;
     }
-
-    dispatch({
-      type: "CART_ADD_ITEM",
-      payload: { ...item, quantity },
-    })
-  }
-
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+  };
   const removeItemHandler = (item) => {
-    dispatch({
-      type: "CART_REMOVE_ITEM",
-      payload: item,
-    })
-  }
-
+    dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
+  };
   const checkoutHandler = () => {
-    router.push("/shipping")
-  }
-
+    router.push('/shipping');
+  };
   return (
-    <Layout title='Shopping Cart'>
-      <Typography component='h1' variant='h1'>
+    <Layout title="Shopping Cart">
+      <Typography component="h1" variant="h1">
         Shopping Cart
       </Typography>
       {cartItems.length === 0 ? (
-        <div>
-          Cart Is Empty{" "}
-          <NextLink href='/' passHref>
-            <Link>Go Shopping</Link>
+        <Box>
+          Cart is empty.{' '}
+          <NextLink href="/" passHref>
+            <Link>Go shopping</Link>
           </NextLink>
-        </div>
+        </Box>
       ) : (
         <Grid container spacing={1}>
           <Grid item md={9} xs={12}>
@@ -75,10 +65,10 @@ function CartPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Image</TableCell>
-                    <TableCell>name</TableCell>
-                    <TableCell align='right'>Quantity</TableCell>
-                    <TableCell align='right'>Price</TableCell>
-                    <TableCell align='right'>Action</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                    <TableCell align="right">Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -104,8 +94,7 @@ function CartPage() {
                           </Link>
                         </NextLink>
                       </TableCell>
-
-                      <TableCell align='right'>
+                      <TableCell align="right">
                         <Select
                           value={item.quantity}
                           onChange={(e) =>
@@ -119,11 +108,11 @@ function CartPage() {
                           ))}
                         </Select>
                       </TableCell>
-                      <TableCell align='right'>${item.price}</TableCell>
-                      <TableCell align='right'>
+                      <TableCell align="right">${item.price}</TableCell>
+                      <TableCell align="right">
                         <Button
-                          variant='contained'
-                          color='secondary'
+                          variant="contained"
+                          color="secondary"
                           onClick={() => removeItemHandler(item)}
                         >
                           x
@@ -135,22 +124,22 @@ function CartPage() {
               </Table>
             </TableContainer>
           </Grid>
-          <Grid md={3} xs={12}>
+          <Grid item md={3} xs={12}>
             <Card>
               <List>
                 <ListItem>
-                  <Typography variant='h2'>
-                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
+                  <Typography variant="h2">
+                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
                     items) : $
                     {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
                   </Typography>
                 </ListItem>
                 <ListItem>
                   <Button
-                    variant='contained'
-                    color='primary'
-                    fullWidth
                     onClick={checkoutHandler}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
                   >
                     Check Out
                   </Button>
@@ -161,7 +150,7 @@ function CartPage() {
         </Grid>
       )}
     </Layout>
-  )
+  );
 }
 
-export default dynamic(() => Promise.resolve(CartPage), { ssr: false })
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
